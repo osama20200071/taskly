@@ -1,22 +1,16 @@
-import {
-  StyleSheet,
-  TextInput,
-  FlatList,
-  View,
-  Text,
-  LayoutAnimation,
-} from "react-native";
+import { StyleSheet, TextInput, FlatList, View, Text } from "react-native";
 import { theme } from "../theme";
 import ListItem from "../components/ListItem";
 import { useEffect, useState } from "react";
-import { orderShoppingList, shoppingItemType } from "../utils";
+import {
+  animate,
+  lHaptics,
+  orderShoppingList,
+  shoppingItemType,
+} from "../utils";
 import { getFromStorage, saveToStorage } from "../storage";
 
 const storageKey = "shopping-list";
-
-const animate = () => {
-  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-};
 
 export default function App() {
   const [shoppingList, setShoppingList] = useState<shoppingItemType[]>([]);
@@ -44,6 +38,7 @@ export default function App() {
     };
     const newList = [newItem, ...shoppingList];
     animate();
+    lHaptics();
     setShoppingList(newList);
     saveToStorage(storageKey, newList);
     setValue("");
@@ -52,6 +47,7 @@ export default function App() {
   const deleteHandler = (id: string) => {
     const updatedList = shoppingList.filter((item) => item.id !== id);
     animate();
+    lHaptics();
     setShoppingList(updatedList);
     saveToStorage(storageKey, updatedList);
   };
@@ -71,6 +67,7 @@ export default function App() {
     });
 
     animate();
+    lHaptics();
     setShoppingList(updatedList);
     saveToStorage(storageKey, updatedList);
   };

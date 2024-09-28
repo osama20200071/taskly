@@ -1,3 +1,6 @@
+import { LayoutAnimation } from "react-native";
+import * as Haptics from "expo-haptics";
+
 export type shoppingItemType = {
   id: string;
   name: string;
@@ -34,3 +37,19 @@ export function orderShoppingList(shoppingList: shoppingItemType[]) {
     return 0;
   });
 }
+
+export const animate = () => {
+  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+};
+
+export const sHaptics = () => {
+  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+};
+
+export const mHaptics = () => {
+  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+};
+
+export const lHaptics = () => {
+  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+};
