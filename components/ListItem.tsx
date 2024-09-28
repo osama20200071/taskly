@@ -1,10 +1,26 @@
-import { Text, Alert, TouchableOpacity, StyleSheet, View } from "react-native";
+import {
+  Text,
+  Alert,
+  TouchableOpacity,
+  StyleSheet,
+  Pressable,
+} from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { theme } from "../theme";
-import { useState } from "react";
 
-export default function ListItem({ name }: { name: string }) {
-  const [isCompleted, setIsCompleted] = useState(false);
+type ListItemProps = {
+  name: string;
+  isCompleted: boolean;
+  onDelete: () => void;
+  onToggle: () => void;
+};
+
+export default function ListItem({
+  name,
+  onDelete,
+  isCompleted,
+  onToggle,
+}: ListItemProps) {
   const deleteHandler = () => {
     Alert.alert(
       `Are you sure you want to delete ${name} ?`,
@@ -12,35 +28,30 @@ export default function ListItem({ name }: { name: string }) {
       [
         {
           text: "yes",
-          onPress: DeletingHandler,
+          onPress: onDelete,
           style: "destructive",
         },
         {
           text: "no",
-          onPress: CancelHandler,
+          onPress: () => {
+            console.log("cancelled");
+          },
           style: "cancel",
         },
       ],
     );
   };
 
-  const DeletingHandler = () => {
-    console.log("deleting");
-    setIsCompleted(true);
-  };
-
-  const CancelHandler = () => {
-    setIsCompleted(false);
-  };
-
   return (
-    <View
+    <Pressable
+      onPress={onToggle}
       style={[
         styles.itemContainer,
         isCompleted ? styles.completedContainer : undefined,
       ]}
     >
       <Text
+        // numberOfLines={1}
         style={[
           styles.itemText,
           isCompleted ? styles.completedText : undefined,
@@ -55,7 +66,7 @@ export default function ListItem({ name }: { name: string }) {
           color={isCompleted ? theme.colorGrey : theme.colorRed}
         />
       </TouchableOpacity>
-    </View>
+    </Pressable>
   );
 }
 
@@ -72,6 +83,7 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: 18,
     fontWeight: "200",
+    flex: 1, // to make the text take up the available space
   },
 
   completedContainer: {

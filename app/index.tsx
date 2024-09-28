@@ -1,40 +1,78 @@
 import {
   StyleSheet,
   TextInput,
-  ScrollView,
   FlatList,
   View,
   Text,
+  LayoutAnimation,
 } from "react-native";
 import { theme } from "../theme";
 import ListItem from "../components/ListItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { orderShoppingList, shoppingItemType } from "../utils";
+import { getFromStorage, saveToStorage } from "../storage";
 
-type shoppingItemType = {
-  id: string;
-  name: string;
-  isCompleted: boolean;
+const storageKey = "shopping-list";
+
+const animate = () => {
+  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 };
-
-const initialShoppingList: shoppingItemType[] = [
-  { id: "1", name: "Coffee", isCompleted: false },
-  { id: "2", name: "Tea", isCompleted: false },
-  { id: "3", name: "Milk", isCompleted: false },
-];
 
 export default function App() {
   const [shoppingList, setShoppingList] = useState<shoppingItemType[]>([]);
   const [value, setValue] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getFromStorage(storageKey);
+
+      if (data) {
+        // animate();
+        setShoppingList(data);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const submitHandler = () => {
     if (value === "") return;
     const newItem = {
       id: new Date().getTime().toString(),
       name: value,
-      isCompleted: false,
+      lastUpdatedTimestamp: Date.now(),
     };
-    setShoppingList([newItem, ...shoppingList]);
+    const newList = [newItem, ...shoppingList];
+    animate();
+    setShoppingList(newList);
+    saveToStorage(storageKey, newList);
     setValue("");
+  };
+
+  const deleteHandler = (id: string) => {
+    const updatedList = shoppingList.filter((item) => item.id !== id);
+    animate();
+    setShoppingList(updatedList);
+    saveToStorage(storageKey, updatedList);
+  };
+
+  const toggleHandler = (id: string) => {
+    const updatedList = shoppingList.map((item) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          lastUpdatedTimestamp: Date.now(),
+          completedAtTimestamp: item.completedAtTimestamp
+            ? undefined
+            : Date.now(),
+        };
+      }
+      return item;
+    });
+
+    animate();
+    setShoppingList(updatedList);
+    saveToStorage(storageKey, updatedList);
   };
 
   return (
@@ -42,8 +80,15 @@ export default function App() {
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
       stickyHeaderIndices={[0]}
-      data={shoppingList}
-      renderItem={({ item }) => <ListItem name={item.name} />}
+      data={orderShoppingList(shoppingList)}
+      renderItem={({ item }) => (
+        <ListItem
+          name={item.name}
+          isCompleted={Boolean(item.completedAtTimestamp)}
+          onDelete={() => deleteHandler(item.id)}
+          onToggle={() => toggleHandler(item.id)}
+        />
+      )}
       ListEmptyComponent={
         <View style={styles.emptyList}>
           <Text style={styles.emptyListText}>Your List is empty</Text>
