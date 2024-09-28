@@ -1,4 +1,11 @@
-import { StyleSheet, TextInput, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  TextInput,
+  ScrollView,
+  FlatList,
+  View,
+  Text,
+} from "react-native";
 import { theme } from "../theme";
 import ListItem from "../components/ListItem";
 import { useState } from "react";
@@ -16,11 +23,10 @@ const initialShoppingList: shoppingItemType[] = [
 ];
 
 export default function App() {
-  const [shoppingList, setShoppingList] =
-    useState<shoppingItemType[]>(initialShoppingList);
+  const [shoppingList, setShoppingList] = useState<shoppingItemType[]>([]);
   const [value, setValue] = useState("");
 
-  const addShoppingListItemHandler = () => {
+  const submitHandler = () => {
     if (value === "") return;
     const newItem = {
       id: new Date().getTime().toString(),
@@ -32,23 +38,28 @@ export default function App() {
   };
 
   return (
-    <ScrollView
+    <FlatList
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
       stickyHeaderIndices={[0]}
-    >
-      <TextInput
-        style={styles.textInput}
-        placeholder="E.g. Coffe"
-        returnKeyType="done"
-        value={value}
-        onChangeText={setValue}
-        onSubmitEditing={addShoppingListItemHandler}
-      />
-      {shoppingList.map((item) => (
-        <ListItem key={item.id} name={item.name} />
-      ))}
-    </ScrollView>
+      data={shoppingList}
+      renderItem={({ item }) => <ListItem name={item.name} />}
+      ListEmptyComponent={
+        <View style={styles.emptyList}>
+          <Text style={styles.emptyListText}>Your List is empty</Text>
+        </View>
+      }
+      ListHeaderComponent={
+        <TextInput
+          style={styles.textInput}
+          placeholder="E.g. Coffe"
+          returnKeyType="done"
+          value={value}
+          onChangeText={setValue}
+          onSubmitEditing={submitHandler}
+        />
+      }
+    />
   );
 }
 
@@ -72,5 +83,15 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     fontSize: 18,
     backgroundColor: theme.colorWhite,
+  },
+
+  emptyList: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: 12,
+  },
+  emptyListText: {
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
