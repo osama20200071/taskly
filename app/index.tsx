@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
-import { theme } from "./theme";
-import ListItem from "./components/ListItem";
+import { theme } from "../theme";
+import ListItem from "../components/ListItem";
 
 const items = ["Coffee", "Tea", "Milk"];
 
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colorWhite,
-    justifyContent: "flex-start",
+    justifyContent: "center",
     marginTop: 50,
   },
 });

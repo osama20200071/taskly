@@ -1,4 +1,11 @@
-import { Text, Alert, TouchableOpacity, StyleSheet, View } from "react-native";
+import {
+  Text,
+  Alert,
+  TouchableOpacity,
+  StyleSheet,
+  View,
+  PixelRatio,
+} from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { theme } from "../theme";
 import { useState } from "react";
@@ -17,7 +24,7 @@ export default function ListItem({ name }: { name: string }) {
         },
         {
           text: "no",
-          onPress: () => console.log("canceled"),
+          onPress: CancelHandler,
           style: "cancel",
         },
       ],
@@ -27,6 +34,10 @@ export default function ListItem({ name }: { name: string }) {
   const DeletingHandler = () => {
     console.log("deleting");
     setIsCompleted(true);
+  };
+
+  const CancelHandler = () => {
+    setIsCompleted(false);
   };
 
   return (
@@ -42,7 +53,7 @@ export default function ListItem({ name }: { name: string }) {
           isCompleted ? styles.completedText : undefined,
         ]}
       >
-        {name}
+        {PixelRatio.get()} {name}
       </Text>
       <TouchableOpacity onPress={deleteHandler} activeOpacity={0.4}>
         <AntDesign
