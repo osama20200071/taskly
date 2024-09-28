@@ -1,11 +1,4 @@
-import {
-  Text,
-  Alert,
-  TouchableOpacity,
-  StyleSheet,
-  View,
-  PixelRatio,
-} from "react-native";
+import { Text, Alert, TouchableOpacity, StyleSheet, View } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { theme } from "../theme";
 import { useState } from "react";
@@ -53,7 +46,7 @@ export default function ListItem({ name }: { name: string }) {
           isCompleted ? styles.completedText : undefined,
         ]}
       >
-        {PixelRatio.get()} {name}
+        {name}
       </Text>
       <TouchableOpacity onPress={deleteHandler} activeOpacity={0.4}>
         <AntDesign
